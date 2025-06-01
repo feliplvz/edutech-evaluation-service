@@ -1,0 +1,837 @@
+{
+	"info": {
+		"_postman_id": "evaluation-service-complete",
+		"name": "🎯 EduTech - Evaluation Service API Complete",
+		"description": "Colección completa de pruebas para el Microservicio de Evaluaciones y Seguimiento Estudiantil.\n\n🚀 **Microservicio:** Spring Boot 3.5.0\n🗄️ **Base de Datos:** PostgreSQL en Railway\n📡 **API:** REST con 48+ endpoints\n\n**Orden de ejecución recomendado:**\n1. Health Check\n2. Quizzes CRUD\n3. Questions CRUD  \n4. Answers CRUD\n5. Quiz Attempts\n6. Student Progress\n\n**Variables de entorno:**\n- baseUrl: http://localhost:8083\n- quizId: ID del quiz creado\n- questionId: ID de la pregunta creada\n- answerId: ID de la respuesta creada\n- attemptId: ID del intento creado",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "🏥 Health & System",
+			"item": [
+				{
+					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Service is UP\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UP\");",
+									"    pm.expect(jsonData.service).to.eql(\"evaluation-service\");",
+									"    pm.expect(jsonData.port).to.eql(8083);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						},
+						"description": "Verificar que el microservicio esté funcionando correctamente"
+					}
+				},
+				{
+					"name": "Database Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Database is UP\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UP\");",
+									"    pm.expect(jsonData.database).to.eql(\"PostgreSQL\");",
+									"    pm.expect(jsonData.connection).to.eql(\"Activa\");",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 1000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health/db",
+							"host": ["{{baseUrl}}"],
+							"path": ["health", "db"]
+						},
+						"description": "Verificar que la conexión a la base de datos esté funcionando"
+					}
+				}
+			]
+		},
+		{
+			"name": "📝 Quizzes Management",
+			"item": [
+				{
+					"name": "Get All Quizzes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"if (pm.response.json().length > 0) {",
+									"    pm.test(\"Quiz has required fields\", function () {",
+									"        var quiz = pm.response.json()[0];",
+									"        pm.expect(quiz).to.have.property('id');",
+									"        pm.expect(quiz).to.have.property('title');",
+									"        pm.expect(quiz).to.have.property('description');",
+									"        pm.expect(quiz).to.have.property('courseId');",
+									"        pm.expect(quiz).to.have.property('passingScore');",
+									"    });",
+									"    ",
+									"    // Guardar ID del primer quiz para usar en otras pruebas",
+									"    pm.environment.set(\"existingQuizId\", pm.response.json()[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/quizzes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "quizzes"]
+						}
+					}
+				},
+				{
+					"name": "Create New Quiz",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Quiz created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.title).to.eql('Quiz de Prueba Postman');",
+									"    pm.expect(jsonData.courseId).to.eql(1);",
+									"    pm.expect(jsonData.passingScore).to.eql(70);",
+									"    ",
+									"    // Guardar el ID del quiz creado",
+									"    pm.environment.set(\"quizId\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Quiz de Prueba Postman\",\n    \"description\": \"Quiz creado automáticamente por Postman para pruebas del API\",\n    \"courseId\": 1,\n    \"lessonId\": 1,\n    \"passingScore\": 70,\n    \"timeLimit\": 30,\n    \"maxAttempts\": 3,\n    \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/quizzes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "quizzes"]
+						}
+					}
+				},
+				{
+					"name": "Get Quiz by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Quiz retrieved successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.title).to.eql('Quiz de Prueba Postman');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/quizzes/{{quizId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "quizzes", "{{quizId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Quiz",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Quiz updated successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.title).to.eql('Quiz Actualizado - Postman');",
+									"    pm.expect(jsonData.passingScore).to.eql(80);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Quiz Actualizado - Postman\",\n    \"description\": \"Quiz actualizado por Postman para verificar funcionalidad PUT\",\n    \"courseId\": 1,\n    \"lessonId\": 1,\n    \"passingScore\": 80,\n    \"timeLimit\": 45,\n    \"maxAttempts\": 5,\n    \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/quizzes/{{quizId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "quizzes", "{{quizId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "❓ Questions Management",
+			"item": [
+				{
+					"name": "Get All Questions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"if (pm.response.json().length > 0) {",
+									"    pm.test(\"Question has required fields\", function () {",
+									"        var question = pm.response.json()[0];",
+									"        pm.expect(question).to.have.property('id');",
+									"        pm.expect(question).to.have.property('text');",
+									"        pm.expect(question).to.have.property('type');",
+									"        pm.expect(question).to.have.property('quizId');",
+									"    });",
+									"    ",
+									"    pm.environment.set(\"existingQuestionId\", pm.response.json()[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/questions",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "questions"]
+						}
+					}
+				},
+				{
+					"name": "Create New Question",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Question created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.text).to.include('Postman');",
+									"    pm.expect(jsonData.type).to.eql('MULTIPLE_CHOICE');",
+									"    ",
+									"    pm.environment.set(\"questionId\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"¿Cuál es la característica principal de Spring Boot testeada por Postman?\",\n    \"type\": \"MULTIPLE_CHOICE\",\n    \"quizId\": {{quizId}},\n    \"points\": 10,\n    \"difficulty\": \"MEDIUM\",\n    \"explanation\": \"Esta pregunta verifica conocimientos sobre Spring Boot\",\n    \"order\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/questions",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "questions"]
+						}
+					}
+				},
+				{
+					"name": "Get Questions by Quiz",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Questions belong to quiz\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    ",
+									"    if (jsonData.length > 0) {",
+									"        jsonData.forEach(function(question) {",
+									"            pm.expect(question.quizId).to.eql(parseInt(pm.environment.get(\"quizId\")));",
+									"        });",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/questions/quiz/{{quizId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "questions", "quiz", "{{quizId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "✅ Answers Management",
+			"item": [
+				{
+					"name": "Create Answer Option A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Answer created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.text).to.include('Autoconfiguración');",
+									"    pm.expect(jsonData.isCorrect).to.eql(true);",
+									"    ",
+									"    pm.environment.set(\"answerIdA\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Autoconfiguración automática\",\n    \"isCorrect\": true,\n    \"questionId\": {{questionId}},\n    \"explanation\": \"Spring Boot se caracteriza por su capacidad de autoconfiguración\",\n    \"order\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/answers",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "answers"]
+						}
+					}
+				},
+				{
+					"name": "Create Answer Option B",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Answer created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.isCorrect).to.eql(false);",
+									"    pm.environment.set(\"answerIdB\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Solo manejo de bases de datos\",\n    \"isCorrect\": false,\n    \"questionId\": {{questionId}},\n    \"explanation\": \"Esta es una respuesta incorrecta\",\n    \"order\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/answers",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "answers"]
+						}
+					}
+				},
+				{
+					"name": "Get Answers by Question",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Answers belong to question\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    pm.expect(jsonData.length).to.be.at.least(2);",
+									"    ",
+									"    jsonData.forEach(function(answer) {",
+									"        pm.expect(answer.questionId).to.eql(parseInt(pm.environment.get(\"questionId\")));",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/answers/question/{{questionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "answers", "question", "{{questionId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🎯 Quiz Attempts",
+			"item": [
+				{
+					"name": "Start Quiz Attempt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Quiz attempt started\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.studentId).to.eql(1001);",
+									"    pm.expect(jsonData.quizId).to.eql(parseInt(pm.environment.get(\"quizId\")));",
+									"    pm.expect(jsonData.status).to.eql('IN_PROGRESS');",
+									"    ",
+									"    pm.environment.set(\"attemptId\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/quiz-attempts/student/1001/quiz/{{quizId}}/start",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "quiz-attempts", "student", "1001", "quiz", "{{quizId}}", "start"]
+						}
+					}
+				},
+				{
+					"name": "Submit Answer to Quiz",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Answer submitted successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.id).to.eql(parseInt(pm.environment.get(\"attemptId\")));",
+									"    pm.expect(jsonData.studentAnswers).to.be.an('array');",
+									"    pm.expect(jsonData.studentAnswers.length).to.be.at.least(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"questionId\": {{questionId}},\n    \"answerId\": {{answerIdA}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/quiz-attempts/{{attemptId}}/submit-answer",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "quiz-attempts", "{{attemptId}}", "submit-answer"]
+						}
+					}
+				},
+				{
+					"name": "Complete Quiz Attempt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Quiz completed successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('COMPLETED');",
+									"    pm.expect(jsonData).to.have.property('score');",
+									"    pm.expect(jsonData.score).to.be.at.least(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/quiz-attempts/{{attemptId}}/complete",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "quiz-attempts", "{{attemptId}}", "complete"]
+						}
+					}
+				},
+				{
+					"name": "Get Quiz Attempt Results",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Results retrieved successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('score');",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData.status).to.eql('COMPLETED');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/quiz-attempts/{{attemptId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "quiz-attempts", "{{attemptId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📊 Student Progress",
+			"item": [
+				{
+					"name": "Get All Student Progress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/progress",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "progress"]
+						}
+					}
+				},
+				{
+					"name": "Get Student Progress by Student ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Progress data is valid\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    ",
+									"    if (jsonData.length > 0) {",
+									"        jsonData.forEach(function(progress) {",
+									"            pm.expect(progress.studentId).to.eql(1001);",
+									"            pm.expect(progress).to.have.property('courseId');",
+									"            pm.expect(progress).to.have.property('completionPercentage');",
+									"        });",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/progress/student/1001",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "progress", "student", "1001"]
+						}
+					}
+				},
+				{
+					"name": "Update Student Progress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"pm.test(\"Progress updated successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.studentId).to.eql(1001);",
+									"    pm.expect(jsonData.courseId).to.eql(1);",
+									"    pm.expect(jsonData.completionPercentage).to.eql(75.5);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"studentId\": 1001,\n    \"courseId\": 1,\n    \"completionPercentage\": 75.5,\n    \"lessonsCompleted\": 15,\n    \"totalLessons\": 20,\n    \"averageScore\": 85.0,\n    \"timeSpent\": 120,\n    \"lastAccessed\": \"2025-06-01T00:00:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/progress",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "progress"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🗑️ Cleanup Tests",
+			"item": [
+				{
+					"name": "Delete Created Quiz",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Quiz deleted successfully\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/quizzes/{{quizId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "quizzes", "{{quizId}}"]
+						},
+						"description": "Limpiar el quiz creado durante las pruebas"
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script que se ejecuta antes de cada request",
+					"console.log('🚀 Executing request: ' + pm.info.requestName);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script que se ejecuta después de cada request",
+					"console.log('✅ Completed: ' + pm.info.requestName + ' - Status: ' + pm.response.code);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8083",
+			"type": "string"
+		}
+	]
+}
