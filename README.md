@@ -348,7 +348,7 @@ CREATE TABLE student_progress (
 ### 1. Clonar el Repositorio
 
 ```bash
-git clone <repository-url>
+git clone <https://github.com/feliplvz/edutech-evaluation-service>
 cd evaluation-service
 ```
 
