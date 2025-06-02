@@ -1,33 +1,33 @@
 {
 	"info": {
-		"_postman_id": "evaluation-service-complete",
-		"name": "🎯 EduTech - Evaluation Service API Complete",
-		"description": "Colección completa de pruebas para el Microservicio de Evaluaciones y Seguimiento Estudiantil.\n\n🚀 **Microservicio:** Spring Boot 3.5.0\n🗄️ **Base de Datos:** PostgreSQL en Railway\n📡 **API:** REST con 48+ endpoints\n\n**Orden de ejecución recomendado:**\n1. Health Check\n2. Quizzes CRUD\n3. Questions CRUD  \n4. Answers CRUD\n5. Quiz Attempts\n6. Student Progress\n\n**Variables de entorno:**\n- baseUrl: http://localhost:8083\n- quizId: ID del quiz creado\n- questionId: ID de la pregunta creada\n- answerId: ID de la respuesta creada\n- attemptId: ID del intento creado",
+		"_postman_id": "evaluation-service-complete-es",
+		"name": "🎯 EduTech - API Completa del Servicio de Evaluaciones",
+		"description": "Colección completa de pruebas para el Microservicio de Evaluaciones y Seguimiento Estudiantil.\n\n🚀 **Microservicio:** Spring Boot 3.5.0\n🗄️ **Base de Datos:** PostgreSQL en Railway\n📡 **API:** REST con 48+ endpoints\n\n**Orden de ejecución recomendado:**\n1. Verificación de Salud\n2. Gestión de Exámenes (CRUD)\n3. Gestión de Preguntas (CRUD)\n4. Gestión de Respuestas (CRUD)\n5. Intentos de Exámenes\n6. Progreso Estudiantil\n\n**Variables de entorno:**\n- baseUrl: http://localhost:8083\n- quizId: ID del examen creado\n- questionId: ID de la pregunta creada\n- answerId: ID de la respuesta creada\n- attemptId: ID del intento creado",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "🏥 Health & System",
+			"name": "🏥 Verificación de Salud y Sistema",
 			"item": [
 				{
-					"name": "Health Check",
+					"name": "Verificación de Salud",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"pm.test(\"El código de estado es 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Service is UP\", function () {",
+									"pm.test(\"El servicio está funcionando\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.status).to.eql(\"UP\");",
 									"    pm.expect(jsonData.service).to.eql(\"evaluation-service\");",
 									"    pm.expect(jsonData.port).to.eql(8083);",
 									"});",
 									"",
-									"pm.test(\"Response time is less than 500ms\", function () {",
+									"pm.test(\"El tiempo de respuesta es menor a 500ms\", function () {",
 									"    pm.expect(pm.response.responseTime).to.be.below(500);",
 									"});"
 								],
@@ -47,24 +47,24 @@
 					}
 				},
 				{
-					"name": "Database Health Check",
+					"name": "Verificación de Salud de Base de Datos",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"pm.test(\"El código de estado es 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Database is UP\", function () {",
+									"pm.test(\"La base de datos está funcionando\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.status).to.eql(\"UP\");",
 									"    pm.expect(jsonData.database).to.eql(\"PostgreSQL\");",
 									"    pm.expect(jsonData.connection).to.eql(\"Activa\");",
 									"});",
 									"",
-									"pm.test(\"Response time is less than 1000ms\", function () {",
+									"pm.test(\"El tiempo de respuesta es menor a 1000ms\", function () {",
 									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
 									"});"
 								],
@@ -86,26 +86,26 @@
 			]
 		},
 		{
-			"name": "📝 Quizzes Management",
+			"name": "📝 Gestión de Exámenes",
 			"item": [
 				{
-					"name": "Get All Quizzes",
+					"name": "Obtener Todos los Exámenes",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"pm.test(\"El código de estado es 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response is an array\", function () {",
+									"pm.test(\"La respuesta es un array\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.be.an('array');",
 									"});",
 									"",
 									"if (pm.response.json().length > 0) {",
-									"    pm.test(\"Quiz has required fields\", function () {",
+									"    pm.test(\"El examen tiene los campos requeridos\", function () {",
 									"        var quiz = pm.response.json()[0];",
 									"        pm.expect(quiz).to.have.property('id');",
 									"        pm.expect(quiz).to.have.property('title');",
@@ -133,20 +133,20 @@
 					}
 				},
 				{
-					"name": "Create New Quiz",
+					"name": "Crear Nuevo Examen",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
+									"pm.test(\"El código de estado es 201\", function () {",
 									"    pm.response.to.have.status(201);",
 									"});",
 									"",
-									"pm.test(\"Quiz created successfully\", function () {",
+									"pm.test(\"El examen se creó exitosamente\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.have.property('id');",
-									"    pm.expect(jsonData.title).to.eql('Quiz de Prueba Postman');",
+									"    pm.expect(jsonData.title).to.eql('Examen de Prueba Postman');",
 									"    pm.expect(jsonData.courseId).to.eql(1);",
 									"    pm.expect(jsonData.passingScore).to.eql(70);",
 									"    ",
@@ -178,7 +178,7 @@
 					}
 				},
 				{
-					"name": "Get Quiz by ID",
+					"name": "Obtener Examen por ID",
 					"event": [
 						{
 							"listen": "test",
@@ -209,7 +209,7 @@
 					}
 				},
 				{
-					"name": "Update Quiz",
+					"name": "Actualizar Examen",
 					"event": [
 						{
 							"listen": "test",
@@ -251,10 +251,10 @@
 			]
 		},
 		{
-			"name": "❓ Questions Management",
+			"name": "❓ Gestión de Preguntas",
 			"item": [
 				{
-					"name": "Get All Questions",
+					"name": "Obtener Todas las Preguntas",
 					"event": [
 						{
 							"listen": "test",
@@ -296,7 +296,7 @@
 					}
 				},
 				{
-					"name": "Create New Question",
+					"name": "Crear Nueva Pregunta",
 					"event": [
 						{
 							"listen": "test",
@@ -339,7 +339,7 @@
 					}
 				},
 				{
-					"name": "Get Questions by Quiz",
+					"name": "Obtener Preguntas por Examen",
 					"event": [
 						{
 							"listen": "test",
@@ -377,10 +377,10 @@
 			]
 		},
 		{
-			"name": "✅ Answers Management",
+			"name": "✅ Gestión de Respuestas",
 			"item": [
 				{
-					"name": "Create Answer Option A",
+					"name": "Crear Opción de Respuesta A",
 					"event": [
 						{
 							"listen": "test",
@@ -423,7 +423,7 @@
 					}
 				},
 				{
-					"name": "Create Answer Option B",
+					"name": "Crear Opción de Respuesta B",
 					"event": [
 						{
 							"listen": "test",
@@ -463,7 +463,7 @@
 					}
 				},
 				{
-					"name": "Get Answers by Question",
+					"name": "Obtener Respuestas por Pregunta",
 					"event": [
 						{
 							"listen": "test",
@@ -500,10 +500,10 @@
 			]
 		},
 		{
-			"name": "🎯 Quiz Attempts",
+			"name": "🎯 Intentos de Exámenes",
 			"item": [
 				{
-					"name": "Start Quiz Attempt",
+					"name": "Iniciar Intento de Examen",
 					"event": [
 						{
 							"listen": "test",
@@ -547,7 +547,7 @@
 					}
 				},
 				{
-					"name": "Submit Answer to Quiz",
+					"name": "Enviar Respuesta al Examen",
 					"event": [
 						{
 							"listen": "test",
@@ -656,20 +656,20 @@
 			]
 		},
 		{
-			"name": "📊 Student Progress",
+			"name": "📊 Progreso Estudiantil",
 			"item": [
 				{
-					"name": "Get All Student Progress",
+					"name": "Obtener Todo el Progreso Estudiantil",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"pm.test(\"El código de estado es 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response is an array\", function () {",
+									"pm.test(\"La respuesta es un array\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.be.an('array');",
 									"});"
@@ -685,21 +685,22 @@
 							"raw": "{{baseUrl}}/api/progress",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "progress"]
-						}
+						},
+						"description": "Obtener información de progreso de todos los estudiantes"
 					}
 				},
 				{
-					"name": "Get Student Progress by Student ID",
+					"name": "Obtener Progreso Estudiantil por ID de Estudiante",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"pm.test(\"El código de estado es 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Progress data is valid\", function () {",
+									"pm.test(\"Los datos de progreso son válidos\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.be.an('array');",
 									"    ",
@@ -723,21 +724,22 @@
 							"raw": "{{baseUrl}}/api/progress/student/1001",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "progress", "student", "1001"]
-						}
+						},
+						"description": "Obtener el progreso específico de un estudiante por su ID"
 					}
 				},
 				{
-					"name": "Update Student Progress",
+					"name": "Actualizar Progreso Estudiantil",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200 or 201\", function () {",
+									"pm.test(\"El código de estado es 200 o 201\", function () {",
 									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
 									"});",
 									"",
-									"pm.test(\"Progress updated successfully\", function () {",
+									"pm.test(\"El progreso se actualizó exitosamente\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.studentId).to.eql(1001);",
 									"    pm.expect(jsonData.courseId).to.eql(1);",
@@ -764,26 +766,27 @@
 							"raw": "{{baseUrl}}/api/progress",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "progress"]
-						}
+						},
+						"description": "Actualizar la información de progreso de un estudiante"
 					}
 				}
 			]
 		},
 		{
-			"name": "🗑️ Cleanup Tests",
+			"name": "🗑️ Pruebas de Limpieza",
 			"item": [
 				{
-					"name": "Delete Created Quiz",
+					"name": "Eliminar Examen Creado",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 204\", function () {",
+									"pm.test(\"El código de estado es 204\", function () {",
 									"    pm.response.to.have.status(204);",
 									"});",
 									"",
-									"pm.test(\"Quiz deleted successfully\", function () {",
+									"pm.test(\"El examen se eliminó exitosamente\", function () {",
 									"    pm.expect(pm.response.text()).to.be.empty;",
 									"});"
 								],
@@ -799,7 +802,7 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "quizzes", "{{quizId}}"]
 						},
-						"description": "Limpiar el quiz creado durante las pruebas"
+						"description": "Limpiar el examen creado durante las pruebas"
 					}
 				}
 			]
@@ -811,8 +814,8 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"// Script que se ejecuta antes de cada request",
-					"console.log('🚀 Executing request: ' + pm.info.requestName);"
+					"// Script que se ejecuta antes de cada petición",
+					"console.log('🚀 Ejecutando petición: ' + pm.info.requestName);"
 				]
 			}
 		},
@@ -821,8 +824,8 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"// Script que se ejecuta después de cada request",
-					"console.log('✅ Completed: ' + pm.info.requestName + ' - Status: ' + pm.response.code);"
+					"// Script que se ejecuta después de cada petición",
+					"console.log('✅ Completado: ' + pm.info.requestName + ' - Estado: ' + pm.response.code);"
 				]
 			}
 		}
