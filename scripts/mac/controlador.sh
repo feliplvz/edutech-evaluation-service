@@ -6,7 +6,7 @@
 # Descripción: Script empresarial para gestionar el ciclo completo de desarrollo
 #              del Microservicio de Evaluaciones EduTech
 # Autor: Equipo de Desarrollo EduTech
-# Versión: 3.0.0 - Edición Española
+# Versión: 3.0.0
 # Plataforma: macOS/Linux/Unix
 # =============================================================================
 

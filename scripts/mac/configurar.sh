@@ -6,7 +6,7 @@
 # Descripción: Configuración empresarial del entorno de desarrollo para el
 #              Microservicio de Evaluaciones EduTech con validación completa
 # Autor: Equipo de Desarrollo EduTech
-# Versión: 3.0.0 - Edición Española
+# Versión: 3.0.0
 # Plataforma: macOS/Linux/Unix
 # =============================================================================
 
